@@ -1,0 +1,127 @@
+(function () {
+  // Create the floating button (unchanged)
+  var chatbotButton = document.createElement("div");
+  var chatbotButton = document.createElement("div");
+  chatbotButton.id = "chatbot-button";
+  chatbotButton.style.position = "fixed";
+  chatbotButton.style.bottom = "20px";
+  chatbotButton.style.right = "2vw";
+  chatbotButton.style.width = "60px";
+  chatbotButton.style.height = "60px";
+  chatbotButton.style.backgroundColor = "#007bff";
+  chatbotButton.style.borderRadius = "50%";
+  chatbotButton.style.cursor = "pointer";
+  chatbotButton.style.zIndex = "1001"; // Ensure it's above the blur overlay
+  chatbotButton.style.display = "flex";
+  chatbotButton.style.alignItems = "center";
+  chatbotButton.style.justifyContent = "center";
+  chatbotButton.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+  chatbotButton.innerHTML =
+    '<img src="https://www.digilocker.gov.in/assets/img/chat-bot.svg" alt="Chat" >';
+  document.body.appendChild(chatbotButton);
+
+  // Create the overlay for the blurred background (unchanged)
+  var blurOverlay = document.createElement("div");
+  blurOverlay.id = "blur-overlay";
+  blurOverlay.style.position = "absolute";
+  blurOverlay.style.top = "0";
+  blurOverlay.style.left = "0";
+  blurOverlay.style.width = "100vw";
+  blurOverlay.style.height = "100vh";
+  blurOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.1)"; // Semi-transparent background
+  // blurOverlay.style.backdropFilter = "blur(10px)"; // Apply the blur
+  blurOverlay.style.zIndex = "999"; // Behind the chatbot but above page content
+  blurOverlay.style.display = "none"; // Hidden by default
+  document.body.appendChild(blurOverlay);
+
+  // Create the chat window (hidden by default)
+  var chatbotWindow = document.createElement("div");
+  chatbotWindow.id = "chatbot-window";
+  chatbotWindow.style.position = "fixed";
+  chatbotWindow.style.backgroundColor = "#d0e2f5";
+  chatbotWindow.style.borderRadius = "10px";
+  chatbotWindow.style.overflow = "hidden";
+  chatbotWindow.style.zIndex = "10000";
+  chatbotWindow.style.display = "none";
+  chatbotWindow.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2)";
+  chatbotWindow.innerHTML =
+    '<iframe id="chatbot-iframe" src="https://aistore.myscheme.in/r3G2LaxwMNVzDZNntO58I?isEmbed=true" allow="clipboard-write" style="width: 100%; height: 100%; border: none;"></iframe>';
+  document.body.appendChild(chatbotWindow);
+
+    // Get the iframe element
+    var chatbotIframe = document.getElementById("chatbot-iframe").contentWindow;
+
+  // Create the close button
+  var closeChatbotButton = document.createElement("div");
+  closeChatbotButton.id = "close-chatbot-button";
+  closeChatbotButton.style.position = "absolute";
+  closeChatbotButton.style.top = "10px";
+  closeChatbotButton.style.right = "10px";
+  closeChatbotButton.style.width = "30px";
+  closeChatbotButton.style.height = "30px";
+  closeChatbotButton.style.padding = "4px";
+  closeChatbotButton.style.color = "#111";
+  closeChatbotButton.style.cursor = "pointer";
+  closeChatbotButton.style.zIndex = "1001";
+  closeChatbotButton.style.display = "flex";
+  closeChatbotButton.style.alignItems = "center";
+  closeChatbotButton.style.justifyContent = "center";
+  closeChatbotButton.innerHTML =
+    '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>';
+  chatbotWindow.appendChild(closeChatbotButton);
+
+  // Function to set chatbot window size and position
+  function setChatbotWindowSize() {
+    if (window.innerWidth > 768) {
+      // For larger screens
+      chatbotWindow.style.width = "40%";
+      chatbotWindow.style.height = "85%";
+      chatbotWindow.style.bottom = "0%";
+      chatbotWindow.style.right = "0%";
+    } else {
+      // For smaller screens
+      chatbotWindow.style.width = "100%";
+      chatbotWindow.style.height = "100%";
+      chatbotWindow.style.bottom = "0";
+      chatbotWindow.style.right = "0";
+    }
+  }
+
+  // Set initial size
+  setChatbotWindowSize();
+
+  // Update size on window resize
+  window.addEventListener('resize', setChatbotWindowSize);
+
+  // Toggle chat window and overlay visibility
+  chatbotButton.addEventListener("click", function () {
+    if (chatbotWindow.style.display === "none") {
+      chatbotWindow.style.display = "block";
+      // blurOverlay.style.display = "block";
+      chatbotButton.style.display = "none";
+      chatbotIframe.postMessage({ action: "handelOpeningBot" }, "*");
+      setChatbotWindowSize();
+    } else {
+      chatbotIframe.postMessage({ action: "handelCloseBotIcon" }, "*");
+    }
+  });
+
+  // Close chat window and overlay when clicking the close button
+  closeChatbotButton.addEventListener("click", function () {
+    chatbotIframe.postMessage({ action: "handelCloseBotIcon" }, "*");
+  });
+
+  // Close chat window and overlay when clicking outside the chat window (on the overlay)
+  blurOverlay.addEventListener("click", function () {
+    chatbotIframe.postMessage({ action: "handelCloseBotIcon" }, "*");
+  });
+
+  // Listen for the postMessage to close the chatbot
+  window.addEventListener("message", function (event) {
+    if (event.data.action === "handelCloseBotModal") {
+      chatbotWindow.style.display = "none";
+      blurOverlay.style.display = "none";
+      chatbotButton.style.display = "flex";
+    }
+  });
+})();
