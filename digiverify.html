@@ -34,7 +34,7 @@
         // Get the enrollment number from URL query parameter
         const urlParams = new URLSearchParams(window.location.search);
         const enrollNumber = urlParams.get('enroll');
-        const cls = urlParams.get('category');
+        const cls = urlParams.get('category') || urlParams.get('class'); 
         // Display the enrollment number
         if (enrollNumber && cls) {
             document.title = `DigiLocker Verification - ${enrollNumber}`;
