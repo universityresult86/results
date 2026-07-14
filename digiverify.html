@@ -33,7 +33,7 @@
     <script>
         // Get the enrollment number from URL query parameter
         const urlParams = new URLSearchParams(window.location.search);
-        const enrollNumber = urlParams.get('enroll');
+        const enrollNumber = urlParams.get('enroll')?.trim();
         const cls = urlParams.get('category') || urlParams.get('class'); 
         // Display the enrollment number
         if (enrollNumber && cls) {
